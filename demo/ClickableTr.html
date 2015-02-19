@@ -4,27 +4,129 @@
     <meta charset="UTF-8">
     <title>可点击行测试demo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link type="text/css"  href="../css/bootstrap.css"/>
+    <link type="text/css" href="../css/bootstrap.css"/>
     <link type="text/css" href="../css/bootstrap-theme.css"/>
+    <script type="text/javascript" src="../js/jquery-1.11.2.js"></script>
     <script type="text/javascript" src="../js/bootstrap.js" rel="stylesheet"></script>
+    <script type="text/javascript" src="../js/handlebars-v3.0.0.js"></script>
     <style>
-        #container{
-            border-radius: 3px;
-            border:1px solid blue;
-            height: 100%;
+        #container {
 
         }
-        #row{
-            background-color:-webkit-gradient(linear,center top,center bottom,from(#ccc), to(#000));
+
+        .person {
+            background: gray;
             height: 44px;
-            padding:10px;
+            padding: 10px 8px;
             box-sizing: border-box;
+            border: 1px solid blue;
+            border-width: 1px 44px 1px 1px;
+            border-radius: 5px;
+            margin-bottom: 1px;
+            border-image: url(../img/right.png) 1 44 1 1;
+            transition: background-color 0.15s;
+            -webkit-user-select: none;
         }
     </style>
 </head>
 <body>
-      <div id="container">
-            <div id="row">12321321</div>
-      </div>
+<div id="container">
+    <!--this is a list which will rendered by handlebars template.    -->
+    <script id="people-template" type="text/x-handlebars-template">
+        {{#people}}
+        <div class="person">{{first_name}}-男</div>
+        {{/people}}
+    </script>
+
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        // compile our template
+        var template = Handlebars.compile($("#people-template").html());
+
+        var data = {
+            people: [
+                { first_name: "张三"},
+                { first_name: "李四"},
+                { first_name: "王五"},
+                { first_name: "张三"},
+                { first_name: "李四"},
+                { first_name: "王五"},
+                { first_name: "张三"},
+                { first_name: "李四"},
+                { first_name: "王五"},
+                { first_name: "张三"},
+                { first_name: "李四"},
+                { first_name: "王五"},
+                { first_name: "张三"},
+                { first_name: "李四"},
+                { first_name: "王五"},
+                { first_name: "刘六"}
+
+            ]
+        };
+
+        $('#container').html(template(data));
+    });
+
+    var timeoutFlag = null;
+    var moveFlag = 0;
+
+    $('#container').bind("touchstart", function (event) {
+        if (event.target.className === 'person') {
+            timeoutFlag = setTimeout(function () {
+                event.target.style.backgroundColor = 'blue';
+            }, 300);
+        }
+
+
+    });
+
+    $('#container').bind("touchmove", function (event) {
+        if (event.target.className === 'person') {
+                clearTimeout(timeoutFlag);
+                moveFlag = 1;
+        }
+
+
+    });
+
+    $('#container').bind("touchend", function (event) {
+        if (event.target.className === 'person') {
+            if (moveFlag === 0) {
+                clearTimeout(timeoutFlag);
+                event.target.style.backgroundColor = 'blue';
+                //让背景色持续一段时间
+                setTimeout(function(){
+                    event.target.style.backgroundColor = 'gray';
+                    window.location.href = 'forward.html';
+                },200);
+            } else {
+                event.target.style.backgroundColor = 'gray';
+                moveFlag = 0;
+            }
+
+        }
+
+    });
+
+
+//    //利用事件委托机制绑定过渡结束回调事件，将背景色恢复
+//    jQuery('#container').bind("webkitTransitionEnd", function (event) {
+//
+//        if (event.target.className === 'person' && event.target.style.backgroundColor == "blue" && moveFlag === 0) {
+//
+//            event.target.style.backgroundColor = 'gray';
+//            //window.location.href = 'forward.html';
+//        }
+//
+//
+//    });
+
+
+</script>
 </body>
 </html>
